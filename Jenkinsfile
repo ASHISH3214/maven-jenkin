@@ -1,4 +1,5 @@
 pipeline {
+<<<<<<< HEAD
     agent any 
 
 
@@ -49,3 +50,26 @@ pipeline {
     }
   }
 }
+=======
+    agent any
+
+    stages {
+        stage('build') {
+            steps {
+                echo 'i can do some building here '
+            }
+        }
+        stage('test') {
+            steps {
+                echo 'test stage goes here '
+            }
+        }
+        stage('deployment') {
+            steps {
+                echo 'deployment stage '
+            }
+        }
+
+    }
+}
+>>>>>>> c3dd6cf5b7e1a332edfb9eec375b3ed95a793d4a
