@@ -2,24 +2,21 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        stage('build') {
             steps {
-                echo "-=- compiling project -=-"
-                bat 'mvn clean compile' 
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
+                echo 'i can do some building here '
             }
-
-
+        }
+        stage('test') {
+            steps {
+                echo 'test stage goes here '
+            }
+        }
+        stage('deployment') {
+            steps {
+                echo 'deployment stage '
+            }
         }
 
-        // stage('Test') {
-        //     steps {
-        //         /* `make check` returns non-zero on test failures,
-        //         * using `true` to allow the Pipeline to continue nonetheless
-        //         */
-        //         bat 'mvn package'
-        //         junit '**/target/*.xml' 
-        //     }
-        }
     }
 }
