@@ -1,25 +1,51 @@
 pipeline {
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                echo "-=- compiling project -=-"
-                bat 'mvn clean compile' 
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
-            }
+    agent any 
 
 
-        }
+    parameters {
+        string(name:"VERSION", defaultValue:'', description:'version to deploy')
+        choice(name:"Version", choices : ['1.1', '1.2', '1.3'], description:'')
+        booleanParam(name:'executeTests', defaultValue:true, description:"skip tests")
+    }
 
-        // stage('Test') {
-        //     steps {
-        //         /* `make check` returns non-zero on test failures,
-        //         * using `true` to allow the Pipeline to continue nonetheless
-        //         */
-        //         bat 'mvn package'
-        //         junit '**/target/*.xml' 
-        //     }
+    tools {
+        maven 'maven'
+    }
+
+    
+    environment {
+        ORG_NAME = "ashish"
+        APP_NAME = "maven-project"
+        APP_VERSION = "1.0-SNAPSHOT"
+        APP_CONTEXT_ROOT = "/"
+        APP_LISTENING_PORT = "8080"
+        TEST_CONTAINER_NAME = "ci-${APP_NAME}-${BUILD_NUMBER}"
+        PREV_CONTAINER_NAME="ci-${APP_NAME}-${currentBuild.previousBuild.number}"
+    }
+
+  stages {
+    stage('Compile') {
+        steps {
+            echo "-=- compiling project -=-"
+            bat "mvn clean compile"
         }
     }
+  
+
+    stage('Package') {
+
+// to execute this stage when params.executeTest is true 
+        when {
+            expression {
+                params.executeTests
+            }
+        }
+
+        steps {
+            echo "-=- packaging project -=-"
+            bat "mvn package -DskipTests=${params.executeTests}"
+            archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+        }
+    }
+  }
 }
