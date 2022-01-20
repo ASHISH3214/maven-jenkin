@@ -1,5 +1,5 @@
 pipeline {
-<<<<<<< HEAD
+
     agent any 
 
 
@@ -48,28 +48,23 @@ pipeline {
             archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
         }
     }
+    
+   stage ('Killing Containers') {
+        steps {
+ 
+            echo "====== killing Containers====="
+            echo "Current Container: ${TEST_CONTAINER_NAME} "
+            echo "Previous Container ${PREV_CONTAINER_NAME}"
+            script {
+                try {
+                    bat "docker rm ${PREV_CONTAINER_NAME}"
+                }catch(Exception e) {
+                    echo e.getMessage() 
+                    echo "Container not found ${PREV_CONTAINER_NAME}"
+                }
+            }
+        }
+    }
+ 
   }
 }
-=======
-    agent any
-
-    stages {
-        stage('build') {
-            steps {
-                echo 'i can do some building here '
-            }
-        }
-        stage('test') {
-            steps {
-                echo 'test stage goes here '
-            }
-        }
-        stage('deployment') {
-            steps {
-                echo 'deployment stage '
-            }
-        }
-
-    }
-}
->>>>>>> c3dd6cf5b7e1a332edfb9eec375b3ed95a793d4a
